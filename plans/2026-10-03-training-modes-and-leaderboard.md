@@ -1,6 +1,6 @@
 # Plan: Training Modes and Local Leaderboard
 
-**Parent Spec:** [training-modes-and-leaderboard.md](../specs/training-modes-and-leaderboard.md)
+**Parent Spec:** [2026-10-03-training-modes-and-leaderboard.md](../specs/2026-10-03-training-modes-and-leaderboard.md)
 **Status:** Approved by PM on 2026-03-10
 **Status:** Approved by Architect on 2026-03-10
 

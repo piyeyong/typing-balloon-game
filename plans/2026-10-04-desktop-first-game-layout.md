@@ -2,8 +2,8 @@
 
 **Status:** Approved; implementation complete; interactive validation pending
 **Approval Note:** The user authorized implementation after the spec/plan review cycle; no reviewer role/date marker is added here because that evidence is not present in this artifact.
-**Spec:** [desktop-first-game-layout.md](../specs/desktop-first-game-layout.md)
-**Parent Spec:** [gameplay-controls-and-compact-layout.md](../specs/gameplay-controls-and-compact-layout.md)
+**Spec:** [2026-10-04-desktop-first-game-layout.md](../specs/2026-10-04-desktop-first-game-layout.md)
+**Parent Spec:** [2026-10-04-gameplay-controls-and-compact-layout.md](../specs/2026-10-04-gameplay-controls-and-compact-layout.md)
 
 ## Goal
 

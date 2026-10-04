@@ -2,7 +2,7 @@
 
 **Status:** Approved by Engineer on 2026-03-10
 **Status:** Approved by Architect on 2026-03-10
-**Parent:** [training-modes-and-leaderboard.md](training-modes-and-leaderboard.md)
+**Parent:** [2026-10-03-training-modes-and-leaderboard.md](2026-10-03-training-modes-and-leaderboard.md)
 
 ## Problem
 The current game locks its difficulty selector during an active round, incorrectly recommends Shift for case-insensitive introductory targets, separates controls from the balloon stage with enough vertical content to require scrolling, and has no pause control.

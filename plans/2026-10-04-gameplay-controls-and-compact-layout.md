@@ -2,8 +2,8 @@
 
 **Status:** Approved by PM on 2026-03-10
 **Status:** Approved by Architect on 2026-03-10
-**Spec:** [gameplay-controls-and-compact-layout.md](../specs/gameplay-controls-and-compact-layout.md)
-**Parent Spec:** [training-modes-and-leaderboard.md](../specs/training-modes-and-leaderboard.md)
+**Spec:** [2026-10-04-gameplay-controls-and-compact-layout.md](../specs/2026-10-04-gameplay-controls-and-compact-layout.md)
+**Parent Spec:** [2026-10-03-training-modes-and-leaderboard.md](../specs/2026-10-03-training-modes-and-leaderboard.md)
 
 ## Goal
 Enable immediate race-safe mode switching, accurate Shift guidance, exact pause/resume behavior, and a compact responsive layout while preserving existing gameplay, scoring, and leaderboard behavior.
