@@ -2,7 +2,7 @@
 
 **Status:** Approved; implementation complete; interactive acceptance validation pending
 **Approval Note:** The user authorized implementation after the spec/plan review cycle; no reviewer role/date marker is added here because that evidence is not present in this artifact.
-**Parent:** [gameplay-controls-and-compact-layout.md](gameplay-controls-and-compact-layout.md)
+**Parent:** [2026-10-04-gameplay-controls-and-compact-layout.md](2026-10-04-gameplay-controls-and-compact-layout.md)
 
 ## Problem
 The current page uses a linear game shell, places round statistics and instructions over the balloon stage, and leaves settings and leaderboard content expanded in the primary flow. This competes with the stage and visual keyboard for space, makes gameplay information obscure the balloon path, and does not provide a deliberate safe state when the browser window becomes too narrow for the desktop-oriented game.
