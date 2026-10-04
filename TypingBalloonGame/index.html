@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="帮助儿童练习英文键盘、常用单词和 C++ 输入的盲打气球小游戏。">
+  <title>盲打气球大作战</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="game-shell">
+    <header class="game-header">
+      <p class="eyebrow">TYPING TRAINING</p>
+      <h1>盲打气球大作战</h1>
+      <p class="subtitle">看屏幕、用正确手指，让气球爆炸！</p>
+    </header>
+
+    <div class="game-layout">
+      <aside class="game-sidebar" aria-label="练习信息和设置">
+        <section class="sidebar-primary" aria-label="本局信息和操作">
+          <section class="stats" aria-label="本局成绩">
+            <div class="stat-card">
+              <span>得分</span>
+              <strong id="score-value">0</strong>
+            </div>
+            <div class="stat-card">
+              <span>连击</span>
+              <strong id="streak-value">0</strong>
+            </div>
+            <div class="stat-card">
+              <span>失误机会</span>
+              <strong id="lives-value" aria-label="剩余三颗星">★★★</strong>
+            </div>
+            <div class="stat-card">
+              <span>速度</span>
+              <strong id="speed-value">1</strong>
+            </div>
+          </section>
+
+          <section class="instruction-card" aria-live="polite">
+            <div class="finger-badge" id="finger-badge">左手食指</div>
+            <p id="instruction-text">选择训练模式，然后点击“开始练习”。</p>
+          </section>
+          <div id="feedback" class="feedback" aria-live="assertive"></div>
+          <p class="narrow-window-advisory">本游戏为实体键盘设计。请使用实体键盘，并加宽浏览器窗口以获得完整体验。</p>
+          <div class="round-actions">
+            <button id="start-button" class="primary-button start-button" type="button">开始练习</button>
+            <button id="pause-button" class="secondary-button pause-button" type="button" aria-pressed="false" disabled>暂停</button>
+          </div>
+          <p id="pause-status" class="visually-hidden" role="status" aria-live="polite"></p>
+        </section>
+
+        <details class="sidebar-disclosure settings-disclosure">
+          <summary>练习设置</summary>
+          <section class="controls-card" aria-labelledby="controls-title">
+            <h2 id="controls-title" class="visually-hidden">练习设置</h2>
+            <div class="control-group mode-control">
+              <label for="mode-select">训练模式</label>
+              <select id="mode-select" name="mode" aria-describedby="mode-description">
+                <option value="home-row">入门级</option>
+                <option value="letters" selected>26 个字母</option>
+                <option value="common-characters">常用字符</option>
+                <option value="full-keyboard">全键盘</option>
+                <option value="common-words">常用单词</option>
+                <option value="cpp">C++ 编程</option>
+              </select>
+            </div>
+            <p id="mode-description" class="mode-description" aria-live="polite">练习 A 到 Z，输入时不区分大小写。</p>
+            <label class="penalty-option" for="penalty-checkbox">
+              <input id="penalty-checkbox" name="penalty" type="checkbox">
+              <span>
+                <strong>错误扣分</strong>
+                <small>每次可输入字符错误扣 5 分，最低为 0 分。</small>
+              </span>
+            </label>
+          </section>
+        </details>
+
+        <p class="storage-scope-cue">排行榜只保存在当前浏览器和用户配置中；展开“本地排行榜”可查看详情。</p>
+        <p id="storage-notice" class="storage-notice" role="status" hidden></p>
+        <details class="sidebar-disclosure leaderboard-disclosure">
+          <summary>本地排行榜</summary>
+          <section id="leaderboard" class="leaderboard-panel" aria-labelledby="leaderboard-title">
+            <div class="leaderboard-heading">
+              <div>
+                <p class="eyebrow">LOCAL TOP 10</p>
+                <h2 id="leaderboard-title">本地排行榜</h2>
+              </div>
+              <p id="leaderboard-context">完成一轮后，这里会显示当前模式与扣分设置的前十名。</p>
+            </div>
+            <ol id="leaderboard-list" class="leaderboard-list" aria-live="polite" aria-describedby="leaderboard-context storage-notice">
+              <li class="leaderboard-empty">还没有成绩，开始第一轮练习吧！</li>
+            </ol>
+          </section>
+        </details>
+      </aside>
+
+      <section class="play-area" aria-label="游戏舞台和键盘">
+        <section id="game-stage" class="game-stage" aria-label="气球游戏区域" tabindex="0">
+          <p id="stage-message" class="stage-message">准备好了吗？<br>把手指放在 <strong>ASDF</strong> 和 <strong>JKL;</strong> 上。</p>
+          <div id="balloon-layer" class="balloon-layer" aria-live="polite"></div>
+        </section>
+
+        <section class="keyboard-panel" aria-labelledby="keyboard-title">
+          <div class="keyboard-heading">
+            <h2 id="keyboard-title">正确手指提示</h2>
+            <p>目标字符、对应按键和需要的 Shift 键会亮起来。</p>
+          </div>
+          <div class="keyboard-scroll" tabindex="0" role="region" aria-label="可横向滚动的英文 QWERTY 键盘">
+            <div class="keyboard" aria-label="美式英文 QWERTY 键盘">
+          <div class="key-row key-row-number">
+            <kbd class="key" data-key="`" data-shift-key="~" data-code="Backquote" aria-label="反引号和波浪号，左手小指"><span class="key-symbols" aria-hidden="true"><span>~</span><span>`</span></span><span class="key-finger">左小指</span></kbd>
+            <kbd class="key" data-key="1" data-shift-key="!" data-code="Digit1" aria-label="1 和感叹号，左手小指"><span class="key-symbols" aria-hidden="true"><span>!</span><span>1</span></span><span class="key-finger">左小指</span></kbd>
+            <kbd class="key" data-key="2" data-shift-key="@" data-code="Digit2" aria-label="2 和艾特符号，左手无名指"><span class="key-symbols" aria-hidden="true"><span>@</span><span>2</span></span><span class="key-finger">左无名指</span></kbd>
+            <kbd class="key" data-key="3" data-shift-key="#" data-code="Digit3" aria-label="3 和井号，左手中指"><span class="key-symbols" aria-hidden="true"><span>#</span><span>3</span></span><span class="key-finger">左中指</span></kbd>
+            <kbd class="key" data-key="4" data-shift-key="$" data-code="Digit4" aria-label="4 和美元符号，左手食指"><span class="key-symbols" aria-hidden="true"><span>$</span><span>4</span></span><span class="key-finger">左食指</span></kbd>
+            <kbd class="key" data-key="5" data-shift-key="%" data-code="Digit5" aria-label="5 和百分号，左手食指"><span class="key-symbols" aria-hidden="true"><span>%</span><span>5</span></span><span class="key-finger">左食指</span></kbd>
+            <kbd class="key" data-key="6" data-shift-key="^" data-code="Digit6" aria-label="6 和脱字符，右手食指"><span class="key-symbols" aria-hidden="true"><span>^</span><span>6</span></span><span class="key-finger">右食指</span></kbd>
+            <kbd class="key" data-key="7" data-shift-key="&amp;" data-code="Digit7" aria-label="7 和与号，右手食指"><span class="key-symbols" aria-hidden="true"><span>&amp;</span><span>7</span></span><span class="key-finger">右食指</span></kbd>
+            <kbd class="key" data-key="8" data-shift-key="*" data-code="Digit8" aria-label="8 和星号，右手中指"><span class="key-symbols" aria-hidden="true"><span>*</span><span>8</span></span><span class="key-finger">右中指</span></kbd>
+            <kbd class="key" data-key="9" data-shift-key="(" data-code="Digit9" aria-label="9 和左括号，右手无名指"><span class="key-symbols" aria-hidden="true"><span>(</span><span>9</span></span><span class="key-finger">右无名指</span></kbd>
+            <kbd class="key" data-key="0" data-shift-key=")" data-code="Digit0" aria-label="0 和右括号，右手小指"><span class="key-symbols" aria-hidden="true"><span>)</span><span>0</span></span><span class="key-finger">右小指</span></kbd>
+            <kbd class="key" data-key="-" data-shift-key="_" data-code="Minus" aria-label="减号和下划线，右手小指"><span class="key-symbols" aria-hidden="true"><span>_</span><span>-</span></span><span class="key-finger">右小指</span></kbd>
+            <kbd class="key" data-key="=" data-shift-key="+" data-code="Equal" aria-label="等号和加号，右手小指"><span class="key-symbols" aria-hidden="true"><span>+</span><span>=</span></span><span class="key-finger">右小指</span></kbd>
+          </div>
+          <div class="key-row key-row-top">
+            <kbd class="key" data-key="q" data-shift-key="Q" data-code="KeyQ" aria-label="Q，左手小指"><span class="key-symbols" aria-hidden="true"><span>Q</span></span><span class="key-finger">左小指</span></kbd>
+            <kbd class="key" data-key="w" data-shift-key="W" data-code="KeyW" aria-label="W，左手无名指"><span class="key-symbols" aria-hidden="true"><span>W</span></span><span class="key-finger">左无名指</span></kbd>
+            <kbd class="key" data-key="e" data-shift-key="E" data-code="KeyE" aria-label="E，左手中指"><span class="key-symbols" aria-hidden="true"><span>E</span></span><span class="key-finger">左中指</span></kbd>
+            <kbd class="key" data-key="r" data-shift-key="R" data-code="KeyR" aria-label="R，左手食指"><span class="key-symbols" aria-hidden="true"><span>R</span></span><span class="key-finger">左食指</span></kbd>
+            <kbd class="key" data-key="t" data-shift-key="T" data-code="KeyT" aria-label="T，左手食指"><span class="key-symbols" aria-hidden="true"><span>T</span></span><span class="key-finger">左食指</span></kbd>
+            <kbd class="key" data-key="y" data-shift-key="Y" data-code="KeyY" aria-label="Y，右手食指"><span class="key-symbols" aria-hidden="true"><span>Y</span></span><span class="key-finger">右食指</span></kbd>
+            <kbd class="key" data-key="u" data-shift-key="U" data-code="KeyU" aria-label="U，右手食指"><span class="key-symbols" aria-hidden="true"><span>U</span></span><span class="key-finger">右食指</span></kbd>
+            <kbd class="key" data-key="i" data-shift-key="I" data-code="KeyI" aria-label="I，右手中指"><span class="key-symbols" aria-hidden="true"><span>I</span></span><span class="key-finger">右中指</span></kbd>
+            <kbd class="key" data-key="o" data-shift-key="O" data-code="KeyO" aria-label="O，右手无名指"><span class="key-symbols" aria-hidden="true"><span>O</span></span><span class="key-finger">右无名指</span></kbd>
+            <kbd class="key" data-key="p" data-shift-key="P" data-code="KeyP" aria-label="P，右手小指"><span class="key-symbols" aria-hidden="true"><span>P</span></span><span class="key-finger">右小指</span></kbd>
+            <kbd class="key" data-key="[" data-shift-key="{" data-code="BracketLeft" aria-label="左方括号和左花括号，右手小指"><span class="key-symbols" aria-hidden="true"><span>{</span><span>[</span></span><span class="key-finger">右小指</span></kbd>
+            <kbd class="key" data-key="]" data-shift-key="}" data-code="BracketRight" aria-label="右方括号和右花括号，右手小指"><span class="key-symbols" aria-hidden="true"><span>}</span><span>]</span></span><span class="key-finger">右小指</span></kbd>
+            <kbd class="key" data-key="\" data-shift-key="|" data-code="Backslash" aria-label="反斜杠和竖线，右手小指"><span class="key-symbols" aria-hidden="true"><span>|</span><span>\</span></span><span class="key-finger">右小指</span></kbd>
+          </div>
+          <div class="key-row key-row-middle">
+            <kbd class="key" data-key="a" data-shift-key="A" data-code="KeyA" aria-label="A，左手小指"><span class="key-symbols" aria-hidden="true"><span>A</span></span><span class="key-finger">左小指</span></kbd>
+            <kbd class="key" data-key="s" data-shift-key="S" data-code="KeyS" aria-label="S，左手无名指"><span class="key-symbols" aria-hidden="true"><span>S</span></span><span class="key-finger">左无名指</span></kbd>
+            <kbd class="key" data-key="d" data-shift-key="D" data-code="KeyD" aria-label="D，左手中指"><span class="key-symbols" aria-hidden="true"><span>D</span></span><span class="key-finger">左中指</span></kbd>
+            <kbd class="key home-key" data-key="f" data-shift-key="F" data-code="KeyF" aria-label="F，左手食指，基准键"><span class="key-symbols" aria-hidden="true"><span>F</span></span><span class="key-finger">左食指</span></kbd>
+            <kbd class="key" data-key="g" data-shift-key="G" data-code="KeyG" aria-label="G，左手食指"><span class="key-symbols" aria-hidden="true"><span>G</span></span><span class="key-finger">左食指</span></kbd>
+            <kbd class="key" data-key="h" data-shift-key="H" data-code="KeyH" aria-label="H，右手食指"><span class="key-symbols" aria-hidden="true"><span>H</span></span><span class="key-finger">右食指</span></kbd>
+            <kbd class="key home-key" data-key="j" data-shift-key="J" data-code="KeyJ" aria-label="J，右手食指，基准键"><span class="key-symbols" aria-hidden="true"><span>J</span></span><span class="key-finger">右食指</span></kbd>
+            <kbd class="key" data-key="k" data-shift-key="K" data-code="KeyK" aria-label="K，右手中指"><span class="key-symbols" aria-hidden="true"><span>K</span></span><span class="key-finger">右中指</span></kbd>
+            <kbd class="key" data-key="l" data-shift-key="L" data-code="KeyL" aria-label="L，右手无名指"><span class="key-symbols" aria-hidden="true"><span>L</span></span><span class="key-finger">右无名指</span></kbd>
+            <kbd class="key" data-key=";" data-shift-key=":" data-code="Semicolon" aria-label="分号和冒号，右手小指"><span class="key-symbols" aria-hidden="true"><span>:</span><span>;</span></span><span class="key-finger">右小指</span></kbd>
+            <kbd class="key" data-key="'" data-shift-key="&quot;" data-code="Quote" aria-label="单引号和双引号，右手小指"><span class="key-symbols" aria-hidden="true"><span>&quot;</span><span>'</span></span><span class="key-finger">右小指</span></kbd>
+          </div>
+          <div class="key-row key-row-bottom">
+            <kbd class="key key-shift" data-key="Shift" data-code="ShiftLeft" data-modifier="shift" aria-label="左 Shift"><span class="key-symbols" aria-hidden="true"><span>Shift</span></span><span class="key-finger">左小指</span></kbd>
+            <kbd class="key" data-key="z" data-shift-key="Z" data-code="KeyZ" aria-label="Z，左手小指"><span class="key-symbols" aria-hidden="true"><span>Z</span></span><span class="key-finger">左小指</span></kbd>
+            <kbd class="key" data-key="x" data-shift-key="X" data-code="KeyX" aria-label="X，左手无名指"><span class="key-symbols" aria-hidden="true"><span>X</span></span><span class="key-finger">左无名指</span></kbd>
+            <kbd class="key" data-key="c" data-shift-key="C" data-code="KeyC" aria-label="C，左手中指"><span class="key-symbols" aria-hidden="true"><span>C</span></span><span class="key-finger">左中指</span></kbd>
+            <kbd class="key" data-key="v" data-shift-key="V" data-code="KeyV" aria-label="V，左手食指"><span class="key-symbols" aria-hidden="true"><span>V</span></span><span class="key-finger">左食指</span></kbd>
+            <kbd class="key" data-key="b" data-shift-key="B" data-code="KeyB" aria-label="B，左手食指"><span class="key-symbols" aria-hidden="true"><span>B</span></span><span class="key-finger">左食指</span></kbd>
+            <kbd class="key" data-key="n" data-shift-key="N" data-code="KeyN" aria-label="N，右手食指"><span class="key-symbols" aria-hidden="true"><span>N</span></span><span class="key-finger">右食指</span></kbd>
+            <kbd class="key" data-key="m" data-shift-key="M" data-code="KeyM" aria-label="M，右手食指"><span class="key-symbols" aria-hidden="true"><span>M</span></span><span class="key-finger">右食指</span></kbd>
+            <kbd class="key" data-key="," data-shift-key="&lt;" data-code="Comma" aria-label="逗号和小于号，右手中指"><span class="key-symbols" aria-hidden="true"><span>&lt;</span><span>,</span></span><span class="key-finger">右中指</span></kbd>
+            <kbd class="key" data-key="." data-shift-key="&gt;" data-code="Period" aria-label="句号和大于号，右手无名指"><span class="key-symbols" aria-hidden="true"><span>&gt;</span><span>.</span></span><span class="key-finger">右无名指</span></kbd>
+            <kbd class="key" data-key="/" data-shift-key="?" data-code="Slash" aria-label="斜杠和问号，右手小指"><span class="key-symbols" aria-hidden="true"><span>?</span><span>/</span></span><span class="key-finger">右小指</span></kbd>
+            <kbd class="key key-shift" data-key="Shift" data-code="ShiftRight" data-modifier="shift" aria-label="右 Shift"><span class="key-symbols" aria-hidden="true"><span>Shift</span></span><span class="key-finger">右小指</span></kbd>
+          </div>
+          <div class="key-row key-row-space">
+            <kbd class="key key-space" data-key=" " data-shift-key=" " data-code="Space" aria-label="空格，拇指"><span class="key-symbols" aria-hidden="true"><span>空格</span></span><span class="key-finger">拇指</span></kbd>
+              </div>
+            </div>
+          </div>
+        </section>
+      </section>
+    </div>
+  </main>
+
+  <dialog id="result-dialog" class="result-dialog" aria-labelledby="result-title">
+    <div class="result-content">
+      <p class="eyebrow">本轮完成</p>
+      <h2 id="result-title">干得漂亮！</h2>
+      <div class="result-grid">
+        <div><span>得分</span><strong id="final-score">0</strong></div>
+        <div><span>击破气球</span><strong id="final-popped">0</strong></div>
+        <div><span>最长连击</span><strong id="final-streak">0</strong></div>
+        <div><span>准确率</span><strong id="final-accuracy">0%</strong></div>
+      </div>
+      <p id="result-message" class="result-message"></p>
+      <section id="result-ranking" class="result-ranking" aria-labelledby="result-ranking-title">
+        <h3 id="result-ranking-title">保存排行榜成绩</h3>
+        <p id="result-rank-summary" class="result-rank-summary" aria-live="polite">输入昵称后保存成绩，空白时将使用“小玩家”。</p>
+        <label for="nickname-input">昵称（最多 12 个字）</label>
+        <input id="nickname-input" name="nickname" type="text" maxlength="12" autocomplete="nickname" placeholder="小玩家">
+        <div class="result-actions">
+          <button id="save-result-button" class="primary-button" type="button">保存并继续</button>
+          <button id="skip-result-button" class="secondary-button" type="button">使用“小玩家”继续</button>
+        </div>
+      </section>
+      <button id="restart-button" class="primary-button" type="button" hidden>再来一轮</button>
+    </div>
+  </dialog>
+
+  <script src="game.js"></script>
+</body>
+</html>
